@@ -100,6 +100,47 @@ async function getRecipes() {
   //            resolve() method.
   // A10. TODO - Log any errors from catch using console.error
   // A11. TODO - Pass any errors to the Promise's reject() function
+
+  // A1.
+  let localRecipes = localStorage.getItem('recipes');
+  if (localRecipes) {
+    return JSON.parse(localRecipes);
+  }
+  // A2.
+  let recipes = [];
+  // A3.
+  return new Promise(async (resolve, reject) => {
+    try {
+      // A4. 
+      for (let url of RECIPE_URLS) {
+        try {
+          // A5. 
+          // A6. 
+          let response = await fetch(url);
+
+          // A7. 
+          let data = await response.json();
+
+          // A8. 
+          recipes.push(data);
+
+          // A9. 
+          if (recipes.length === RECIPE_URLS.length) {
+            saveRecipesToStorage(recipes);
+            resolve(recipes);
+          }
+        } catch (error) {
+          // A10. 
+          console.error('Failed to fetch recipe from URL:', url, error);
+          // A11. 
+          reject(error);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch recipes:', error);
+      reject(error);
+    }
+  });
 }
 
 /**
